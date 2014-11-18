@@ -13,6 +13,7 @@
 
 #include <assert.h>
 #include <dlfcn.h>
+#include <stddef.h>
 #include "modapi.h"
 #include "module.h"
 
@@ -21,6 +22,27 @@ typedef SharemindFacilityModuleApi0x1ModuleContext ModuleContext;
 typedef SharemindFacilityModuleApi0x1Initializer ModuleInitializer;
 typedef SharemindFacilityModuleApi0x1Deinitializer ModuleDeinitializer;
 typedef SharemindFacilityModuleApi0x1FacilityGetter FacilityGetter;
+
+typedef struct {
+    SharemindFacilityModuleApi * fmodapi;
+    ModuleContext moduleContext;
+} ApiContext;
+
+static inline ApiContext * ModuleContext_apiContext(ModuleContext * m)
+{ return (ApiContext *) (((char *) m) - offsetof(ApiContext,moduleContext)); }
+
+#define MODULE_CONTEXT_GETTER_DEFINE(Name) \
+    static SharemindFacility const * ModuleContext_find ## Name ## Facility( \
+             ModuleContext * m, \
+             const char * signature) \
+    { \
+        return SharemindFacilityModuleApi_find ## Name ## Facility( \
+                ModuleContext_apiContext(m)->fmodapi, \
+                signature); \
+    }
+MODULE_CONTEXT_GETTER_DEFINE(Module)
+MODULE_CONTEXT_GETTER_DEFINE(Pd)
+MODULE_CONTEXT_GETTER_DEFINE(Pdpi)
 
 /** API 0x1 data */
 typedef struct {
@@ -101,21 +123,27 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
 {
     ApiData * const apiData = (ApiData *) m->apiData;
 
-    ModuleContext context = {
-        .moduleHandle = NULL, /* Just in case */
-        .conf = m->conf
+    ApiContext apiContext = {
+        m->modapi,
+        {
+            .moduleHandle = NULL, /* Just in case */
+            .conf = m->conf,
+            .findModuleFacility = &ModuleContext_findModuleFacility,
+            .findPdFacility = &ModuleContext_findPdFacility,
+            .findPdpiFacility = &ModuleContext_findPdpiFacility
+        }
     };
-    switch (apiData->initializer(&context)) {
+    switch (apiData->initializer(&apiContext.moduleContext)) {
         case SHAREMIND_FACILITY_MODULE_API_0x1_OK:
-            if (!context.moduleHandle) {
-                apiData->deinitializer(&context);
+            if (!apiContext.moduleContext.moduleHandle) {
+                apiData->deinitializer(&apiContext.moduleContext);
                 SharemindFacilityModule_setError(
                             m,
                             SHAREMIND_FACILITY_MODULE_API_API_ERROR,
                             "Facility module handle was not initialized!");
                 return SHAREMIND_FACILITY_MODULE_API_API_ERROR;
             }
-            m->moduleHandle = context.moduleHandle;
+            m->moduleHandle = apiContext.moduleContext.moduleHandle;
             return SHAREMIND_FACILITY_MODULE_API_OK;
         #define SHAREMIND_EC(theirs,ours) \
             case SHAREMIND_FACILITY_MODULE_API_0x1_ ## theirs: \
@@ -144,11 +172,18 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
 
 void SharemindFacilityModule_deinit_0x1(SharemindFacilityModule * const m) {
     ApiData * const apiData = (ApiData *) m->apiData;
-    ModuleContext context = {
-        .moduleHandle = m->moduleHandle,
-        .conf = m->conf
+
+    ApiContext apiContext = {
+        m->modapi,
+        {
+            .moduleHandle = m->moduleHandle,
+            .conf = m->conf,
+            .findModuleFacility = &ModuleContext_findModuleFacility,
+            .findPdFacility = &ModuleContext_findPdFacility,
+            .findPdpiFacility = &ModuleContext_findPdpiFacility
+        }
     };
-    apiData->deinitializer(&context);
+    apiData->deinitializer(&apiContext.moduleContext);
 }
 
 #define SHAREMIND_LIBFMODAPI_MODULE_0x1_DEFINE_METHODS(name,Name) \
@@ -158,12 +193,20 @@ void SharemindFacilityModule_deinit_0x1(SharemindFacilityModule * const m) {
             const char * signature) \
     { \
         ApiData * const apiData = (ApiData *) m->apiData; \
-        ModuleContext context = { \
-            .moduleHandle = m->moduleHandle, \
-            .conf = m->conf \
+        ApiContext apiContext = { \
+            m->modapi, \
+            { \
+                .moduleHandle = m->moduleHandle, \
+                .conf = m->conf, \
+                .findModuleFacility = &ModuleContext_findModuleFacility, \
+                .findPdFacility = &ModuleContext_findPdFacility, \
+                .findPdpiFacility = &ModuleContext_findPdpiFacility \
+            } \
         }; \
         return apiData->name ## FacilityGetter \
-               ? (*(apiData->name ## FacilityGetter))(&context, signature) \
+               ? (*(apiData->name ## FacilityGetter))( \
+                         &apiContext.moduleContext, \
+                         signature) \
                : NULL; \
     }
 SHAREMIND_LIBFMODAPI_MODULE_0x1_DEFINE_METHODS(module,Module)

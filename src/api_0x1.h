@@ -70,6 +70,12 @@ SHAREMIND_ENUM_CUSTOM_DEFINE(SharemindFacilityModuleApi0x1Error,
 typedef struct SharemindFacilityModuleApi0x1ModuleContext_
         SharemindFacilityModuleApi0x1ModuleContext;
 
+/** Module facility getter signatures: */
+typedef SharemindModuleApi0x1Facility const *
+(* SharemindFacilityModuleApi0x1FacilityGetter)(
+                SharemindFacilityModuleApi0x1ModuleContext * c,
+                const char * signature);
+
 struct SharemindFacilityModuleApi0x1ModuleContext_ {
 
     /**
@@ -83,6 +89,18 @@ struct SharemindFacilityModuleApi0x1ModuleContext_ {
       \note Might be NULL if empty.
     */
     const char * SHAREMIND_ICONST conf;
+
+    /** \brief Looks up a module facility with the given signature. */
+    SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST
+            findModuleFacility;
+
+    /** \brief Looks up a protection domain facility with the given signature.*/
+    SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST findPdFacility;
+
+    /** \brief Looks up a protection domain process instance facility with the
+               given signature. */
+    SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST
+            findPdpiFacility;
 
 };
 
@@ -106,26 +124,20 @@ typedef void (* SharemindFacilityModuleApi0x1Deinitializer)(
             SharemindFacilityModuleApi0x1ModuleContext * c)
 
 
-/** Module facility getter signatures: */
-typedef SharemindModuleApi0x1Facility *
-(* SharemindFacilityModuleApi0x1FacilityGetter)(
-                SharemindFacilityModuleApi0x1ModuleContext * c,
-                const char * signature);
-
 #define SHAREMIND_FACILITY_MODULE_API_0x1_FIND_MODULE_FACILITY(c, signature) \
-    SharemindModuleApi0x1Facility * \
+    SharemindModuleApi0x1Facility const * \
     SharemindFacilityModuleApi0x1_findModuleFacility( \
             SharemindFacilityModuleApi0x1ModuleContext * c, \
             const char * signature)
 
 #define SHAREMIND_FACILITY_MODULE_API_0x1_FIND_PD_FACILITY(c, signature) \
-    SharemindModuleApi0x1Facility * \
+    SharemindModuleApi0x1Facility const * \
     SharemindFacilityModuleApi0x1_findPdFacility( \
             SharemindFacilityModuleApi0x1ModuleContext * c, \
             const char * signature)
 
 #define SHAREMIND_FACILITY_MODULE_API_0x1_FIND_PDPI_FACILITY(c, signature) \
-    SharemindModuleApi0x1Facility * \
+    SharemindModuleApi0x1Facility const * \
     SharemindFacilityModuleApi0x1_findPdpiFacility( \
             SharemindFacilityModuleApi0x1ModuleContext * c, \
             const char * signature)
