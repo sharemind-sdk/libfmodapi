@@ -198,9 +198,9 @@ void SharemindFacilityModule_deinit_0x1(SharemindFacilityModule * const m) {
             { \
                 .moduleHandle = m->moduleHandle, \
                 .conf = m->conf, \
-                .findModuleFacility = &ModuleContext_findModuleFacility, \
-                .findPdFacility = &ModuleContext_findPdFacility, \
-                .findPdpiFacility = &ModuleContext_findPdpiFacility \
+                .findModuleFacility = NULL, \
+                .findPdFacility = NULL, \
+                .findPdpiFacility = NULL \
             } \
         }; \
         return apiData->name ## FacilityGetter \

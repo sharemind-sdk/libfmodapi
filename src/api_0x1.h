@@ -90,15 +90,27 @@ struct SharemindFacilityModuleApi0x1ModuleContext_ {
     */
     const char * SHAREMIND_ICONST conf;
 
-    /** \brief Looks up a module facility with the given signature. */
+    /**
+      \brief Looks up a module facility with the given signature.
+      \warning This field is only non-NULL in the *_init() and *_deinit()
+               functions of the facility module.
+    */
     SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST
             findModuleFacility;
 
-    /** \brief Looks up a protection domain facility with the given signature.*/
+    /**
+      \brief Looks up a protection domain facility with the given signature.
+      \warning This field is only non-NULL in the *_init() and *_deinit()
+               functions of the facility module.
+    */
     SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST findPdFacility;
 
-    /** \brief Looks up a protection domain process instance facility with the
-               given signature. */
+    /**
+      \brief Looks up a protection domain process instance facility with the
+             given signature.
+      \warning This field is only non-NULL in the *_init() and *_deinit()
+               functions of the facility module.
+    */
     SharemindFacilityModuleApi0x1FacilityGetter SHAREMIND_ICONST
             findPdpiFacility;
 
