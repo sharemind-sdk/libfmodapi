@@ -120,11 +120,13 @@ struct SharemindFacilityModuleApi0x1ModuleContext_ {
 /** Module initializer function signature: */
 typedef SharemindFacilityModuleApi0x1Error
 (* SharemindFacilityModuleApi0x1Initializer)(
-                SharemindFacilityModuleApi0x1ModuleContext * c);
+                SharemindFacilityModuleApi0x1ModuleContext * c,
+                char const ** errorStr);
 
-#define SHAREMIND_FACILITY_MODULE_API_0x1_INITIALIZER(c) \
+#define SHAREMIND_FACILITY_MODULE_API_0x1_INITIALIZER(c,errorStr) \
     SharemindFacilityModuleApi0x1Error SharemindFacilityModuleApi0x1_init( \
-            SharemindFacilityModuleApi0x1ModuleContext * c)
+            SharemindFacilityModuleApi0x1ModuleContext * c, \
+            char const ** errorStr)
 
 
 /** Module deinitializer function signature: */

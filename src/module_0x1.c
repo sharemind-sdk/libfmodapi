@@ -133,7 +133,8 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
             .findPdpiFacility = &ModuleContext_findPdpiFacility
         }
     };
-    switch (apiData->initializer(&apiContext.moduleContext)) {
+    char const * errorStr = NULL;
+    switch (apiData->initializer(&apiContext.moduleContext, &errorStr)) {
         case SHAREMIND_FACILITY_MODULE_API_0x1_OK:
             if (!apiContext.moduleContext.moduleHandle) {
                 apiData->deinitializer(&apiContext.moduleContext);
@@ -150,7 +151,9 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
                 SharemindFacilityModule_setError( \
                         m, \
                         SHAREMIND_FACILITY_MODULE_API_ ## ours, \
-                        "Facility module returned " #theirs "!"); \
+                        errorStr \
+                        ? errorStr \
+                        : "Facility module returned " #theirs "!"); \
                 return SHAREMIND_FACILITY_MODULE_API_ ## ours
         #define SHAREMIND_EC2(e) SHAREMIND_EC(e,e)
         SHAREMIND_EC2(OUT_OF_MEMORY);
