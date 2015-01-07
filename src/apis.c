@@ -16,7 +16,7 @@
 
 #define SHAREMIND_LIBFMODAPI_APIS_DEFINE_METHODS(name,Name) \
     .find ## Name ## Facility = \
-            &SharemindFacilityModule_find ## Name ## Facility
+            &SharemindFacilityModule_find ## Name ## Facility_0x1
 
 const SharemindFacilityApi gSharemindFacilityApis[] = {
     { .moduleLoad = &SharemindFacilityModule_load_0x1,
