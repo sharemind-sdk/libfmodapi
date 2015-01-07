@@ -291,7 +291,9 @@ uint32_t SharemindFacilityModule_apiVersionInUse(
             const char * signature) \
     { /* No locking: const after SharemindFacilityModuleApi_newModule: */ \
         assert(m); \
-        return (*(m->api->find ## Name ## Facility))(m, signature); \
+        return m->isInitialized \
+               ? (*(m->api->find ## Name ## Facility))(m, signature) \
+               : NULL; \
     }
 SHAREMIND_LIBFMODAPI_MODULE_DEFINE_METHODS(module,Module)
 SHAREMIND_LIBFMODAPI_MODULE_DEFINE_METHODS(pd,Pd)
