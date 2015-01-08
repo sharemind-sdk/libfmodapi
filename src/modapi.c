@@ -12,11 +12,25 @@
 #include "modapi.h"
 
 #include <stdlib.h>
+#include "module.h"
 
 
 SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING(SharemindFacilityModuleApiError,
                                       SHAREMIND_FACILITY_MODULE_API_ERROR_ENUM)
 
+SHAREMIND_VECTOR_DEFINE_INIT(SharemindFacilityModulesVector, static inline)
+SHAREMIND_VECTOR_DEFINE_REVERSE_DESTROY_WITH(
+        SharemindFacilityModulesVector,
+        static inline,
+        SharemindFacilityModule *,,
+        free,
+        SharemindFacilityModule_free(*value);)
+SHAREMIND_VECTOR_DEFINE_FORCE_RESIZE(SharemindFacilityModulesVector,
+                                     static inline,
+                                     SharemindFacilityModule *,
+                                     realloc)
+SHAREMIND_VECTOR_DEFINE_PUSH(SharemindFacilityModulesVector,,
+                             SharemindFacilityModule *)
 
 SharemindFacilityModuleApi * SharemindFacilityModuleApi_new(
         SharemindFacilityModuleApiError * error,
@@ -44,7 +58,7 @@ SharemindFacilityModuleApi * SharemindFacilityModuleApi_new(
 
     SHAREMIND_LIBFMODAPI_LASTERROR_INIT(fmodapi);
     SHAREMIND_TAG_INIT(fmodapi);
-    SharemindFacilityModulesSet_init(&fmodapi->modules);
+    SharemindFacilityModulesVector_init(&fmodapi->modules);
     return fmodapi;
 }
 
@@ -53,9 +67,7 @@ void SharemindFacilityModuleApi_free(SharemindFacilityModuleApi * fmodapi) {
 
     SHAREMIND_TAG_DESTROY(fmodapi);
 
-    while (fmodapi->modules.size > 0u)
-        SharemindFacilityModule_free(
-                    *SharemindFacilityModulesSet_at(&fmodapi->modules, 0u));
+    SharemindFacilityModulesVector_destroy(&fmodapi->modules);
 
     SHAREMIND_RECURSIVE_LOCK_DEINIT(fmodapi);
 
@@ -63,16 +75,18 @@ void SharemindFacilityModuleApi_free(SharemindFacilityModuleApi * fmodapi) {
 }
 
 #define SHAREMIND_LIBFMODAPI_MODAPI_DEFINE_FUNCTIONS(name,Name) \
-    SHAREMIND_SET_DEFINE_FOREACH_WITH_INLINE( \
-            static inline SharemindFacility const * , \
-            SharemindFacilityModulesSet, \
+    SHAREMIND_VECTOR_DEFINE_FOREACH( \
+            SharemindFacilityModulesVector, \
             find ## Name ## Facility, \
+            static inline SharemindFacility const * , \
+            const, \
+            SharemindFacilityModule *, \
             SHAREMIND_COMMA const char * signature,, \
             NULL, \
-            assert(item->key); \
+            assert(*value); \
             SharemindFacility const * const result = \
                     SharemindFacilityModule_find ## Name ## Facility( \
-                            item->key, \
+                            *value, \
                             signature); \
             if (result) \
                 return result;) \
@@ -84,8 +98,9 @@ void SharemindFacilityModuleApi_free(SharemindFacilityModuleApi * fmodapi) {
         assert(m); \
         SharemindFacilityModuleApi_lockConst(m); \
         SharemindFacility const * const sc = \
-                SharemindFacilityModulesSet_foreach_with_find ## Name ## \
-                                Facility(&m->modules, signature); \
+                SharemindFacilityModulesVector_find ## Name ## Facility( \
+                        &m->modules, \
+                        signature); \
         SharemindFacilityModuleApi_unlockConst(m); \
         return sc; \
     }

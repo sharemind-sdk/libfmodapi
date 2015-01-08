@@ -110,10 +110,6 @@ SharemindFacilityModule * SharemindFacilityModuleApi_newModule(
   SharemindFacilityModule
 *******************************************************************************/
 
-void SharemindFacilityModule_free(SharemindFacilityModule * m)
-        __attribute__ ((nonnull(1)));
-
-
 SHAREMIND_LIBFMODAPI_DECLARE_ERROR_FUNCTIONS(SharemindFacilityModule)
 SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS(SharemindFacilityModule);
 SHAREMIND_TAG_FUNCTIONS_DECLARE(SharemindFacilityModule,,)

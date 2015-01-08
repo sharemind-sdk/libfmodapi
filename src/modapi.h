@@ -18,8 +18,8 @@
 #include <sharemind/comma.h>
 #include <sharemind/extern_c.h>
 #include <sharemind/recursive_locks.h>
-#include <sharemind/set.h>
 #include <sharemind/tag.h>
+#include <sharemind/vector.h>
 #include <stdbool.h>
 #include "lasterror.h"
 #include "libfmodapi.h"
@@ -27,17 +27,11 @@
 
 SHAREMIND_EXTERN_C_BEGIN
 
-SHAREMIND_SET_DECLARE_DEFINE(SharemindFacilityModulesSet,
-                             SharemindFacilityModule *,
-                             ((uintptr_t) key),
-                             SHAREMIND_SET_KEY_EQUALS_voidptr,
-                             SHAREMIND_SET_KEY_LESS_THAN_voidptr,
-                             SHAREMIND_SET_KEYCOPY_REGULAR,
-                             SHAREMIND_SET_KEYFREE_REGULAR,
-                             malloc,
-                             free,
-                             inline,
-                             SHAREMIND_COMMA visibility("internal"))
+SHAREMIND_VECTOR_DEFINE_BODY(SharemindFacilityModulesVector,
+                             SharemindFacilityModule *,)
+SHAREMIND_VECTOR_DECLARE_PUSH(SharemindFacilityModulesVector,,
+                              SharemindFacilityModule *,
+                              SHAREMIND_COMMA visibility("internal"))
 
 struct SharemindFacilityModuleApi_ {
 
@@ -45,7 +39,7 @@ struct SharemindFacilityModuleApi_ {
     SHAREMIND_LIBFMODAPI_LASTERROR_FIELDS;
     SHAREMIND_TAG_DECLARE_FIELDS;
 
-    SharemindFacilityModulesSet modules;
+    SharemindFacilityModulesVector modules;
 
 };
 

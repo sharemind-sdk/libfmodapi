@@ -54,6 +54,9 @@ struct SharemindFacilityModule_ {
 
 };
 
+void SharemindFacilityModule_free(SharemindFacilityModule * m)
+        __attribute__((nonnull(1), visibility("internal")));
+
 SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DECLARE_DEFINE(
         SharemindFacilityModule,
         inline,
