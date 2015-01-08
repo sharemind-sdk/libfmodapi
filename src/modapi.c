@@ -21,16 +21,13 @@ SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING(SharemindFacilityModuleApiError,
 SHAREMIND_VECTOR_DEFINE_INIT(SharemindFacilityModulesVector, static inline)
 SHAREMIND_VECTOR_DEFINE_REVERSE_DESTROY_WITH(
         SharemindFacilityModulesVector,
-        static inline,
-        SharemindFacilityModule *,,
+        static inline,,
         free,
         SharemindFacilityModule_free(*value);)
 SHAREMIND_VECTOR_DEFINE_FORCE_RESIZE(SharemindFacilityModulesVector,
                                      static inline,
-                                     SharemindFacilityModule *,
                                      realloc)
-SHAREMIND_VECTOR_DEFINE_PUSH(SharemindFacilityModulesVector,,
-                             SharemindFacilityModule *)
+SHAREMIND_VECTOR_DEFINE_PUSH(SharemindFacilityModulesVector,)
 
 SharemindFacilityModuleApi * SharemindFacilityModuleApi_new(
         SharemindFacilityModuleApiError * error,
@@ -80,7 +77,6 @@ void SharemindFacilityModuleApi_free(SharemindFacilityModuleApi * fmodapi) {
             find ## Name ## Facility, \
             static inline SharemindFacility const * , \
             const, \
-            SharemindFacilityModule *, \
             SHAREMIND_COMMA const char * signature,, \
             NULL, \
             assert(*value); \

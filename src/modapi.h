@@ -27,10 +27,10 @@
 
 SHAREMIND_EXTERN_C_BEGIN
 
-SHAREMIND_VECTOR_DEFINE_BODY(SharemindFacilityModulesVector,
-                             SharemindFacilityModule *,)
+SHAREMIND_VECTOR_DECLARE_BODY(SharemindFacilityModulesVector,
+                              SharemindFacilityModule *)
+SHAREMIND_VECTOR_DEFINE_BODY(SharemindFacilityModulesVector,)
 SHAREMIND_VECTOR_DECLARE_PUSH(SharemindFacilityModulesVector,,
-                              SharemindFacilityModule *,
                               SHAREMIND_COMMA visibility("internal"))
 
 struct SharemindFacilityModuleApi_ {
