@@ -38,8 +38,10 @@ typedef struct {
     ModuleContext moduleContext;
 } ApiContext;
 
-static inline ApiContext * ModuleContext_apiContext(ModuleContext * m)
-{ return (ApiContext *) (((char *) m) - offsetof(ApiContext,moduleContext)); }
+static inline ApiContext * ModuleContext_apiContext(ModuleContext * m) {
+    return (ApiContext *)(void *)(((char *) m)
+                                  - offsetof(ApiContext,moduleContext));
+}
 
 #define MODULE_CONTEXT_GETTER_DEFINE(Name) \
     static SharemindFacility const * ModuleContext_find ## Name ## Facility( \
