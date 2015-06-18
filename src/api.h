@@ -46,7 +46,8 @@ typedef struct SharemindFacilityModuleInfo_ {
 } const SharemindFacilityModuleInfo;
 
 #define SHAREMIND_FACILITY_MODULE_API_MODULE_INFO(name, version, ...) \
-    extern const SharemindFacilityModuleInfo sharemindFacilityModuleInfo = { \
+    extern SharemindFacilityModuleInfo const sharemindFacilityModuleInfo; \
+    extern SharemindFacilityModuleInfo const sharemindFacilityModuleInfo = { \
         (name), (version), { __VA_ARGS__, 0x0 } \
     }
 
