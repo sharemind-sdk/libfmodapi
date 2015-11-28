@@ -27,9 +27,11 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
 FIND_PACKAGE(SharemindLibmodapi 0.3.0 REQUIRED)
+FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
 INCLUDE_DIRECTORIES(
     ${SharemindCHeaders_INCLUDE_DIRS}
     ${SharemindLibmodapi_INCLUDE_DIRS}
+    ${SharemindLibProcessFacility_INCLUDE_DIRS}
 )
 
 ADD_COMPILE_OPTIONS(
@@ -61,6 +63,7 @@ SET(LIBFMODAPI_INSTALL_DEFINITIONS "-D__STDC_LIMIT_MACROS"
 ADD_DEFINITIONS(
     ${SharemindCHeaders_DEFINITIONS}
     ${SharemindLibmodapi_DEFINITIONS}
+    ${SharemindLibProcessFacility_DEFINITIONS}
     ${LIBFMODAPI_INSTALL_DEFINITIONS})
 
 
