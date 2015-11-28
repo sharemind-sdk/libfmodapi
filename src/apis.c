@@ -33,6 +33,8 @@ const SharemindFacilityApi gSharemindFacilityApis[] = {
       .moduleUnload = &SharemindFacilityModule_unload_0x1,
       .moduleInit = &SharemindFacilityModule_init_0x1,
       .moduleDeinit = &SharemindFacilityModule_deinit_0x1,
+      .modulePiStartup = &SharemindFacilityModule_Pi_startup_0x1,
+      .modulePiShutdown = &SharemindFacilityModule_Pi_shutdown_0x1,
 
       SHAREMIND_LIBFMODAPI_APIS_DEFINE_METHODS(module,Module),
       SHAREMIND_LIBFMODAPI_APIS_DEFINE_METHODS(pd,Pd),

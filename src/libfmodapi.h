@@ -23,6 +23,7 @@
 #include <sharemind/extern_c.h>
 #include <sharemind/lasterror.h>
 #include <sharemind/libmodapi/libmodapi.h>
+#include <sharemind/libprocessfacility.h>
 #include <sharemind/preprocessor.h>
 #include <sharemind/tag.h>
 #include <stdbool.h>
@@ -72,6 +73,9 @@ typedef struct SharemindFacilityModuleApi_ SharemindFacilityModuleApi;
 struct SharemindFacilityModule_;
 typedef struct SharemindFacilityModule_ SharemindFacilityModule;
 
+struct SharemindFacilityModulePis_;
+typedef struct SharemindFacilityModulePis_ SharemindFacilityModulePis;
+
 #define SHAREMIND_FACILITY_MODULE_API_ERROR_ENUM \
     ((SHAREMIND_FACILITY_MODULE_API_OK, = 0)) \
     ((SHAREMIND_FACILITY_MODULE_API_OUT_OF_MEMORY,)) \
@@ -115,6 +119,13 @@ SharemindFacilityModule * SharemindFacilityModuleApi_newModule(
         const char * filename,
         const char * conf) __attribute__ ((nonnull(1, 2)));
 
+SharemindFacilityModulePis * SharemindFacilityModuleApi_newProcessInstance(
+        SharemindFacilityModuleApi * modapi,
+        SharemindProcessId uniqueId,
+        SharemindFacilityModuleApiError * error,
+        const char ** errorStr)
+        __attribute__((nonnull(1)));
+
 
 /*******************************************************************************
   SharemindFacilityModule
@@ -149,6 +160,18 @@ uint32_t SharemindFacilityModule_apiVersionInUse(
 
 SharemindFacilityModuleApi * SharemindFacilityModule_facilityModuleApi(
         const SharemindFacilityModule * m) __attribute__ ((nonnull(1)));
+
+
+/*******************************************************************************
+  SharemindFacilityModulePis
+*******************************************************************************/
+
+SHAREMIND_LIBFMODAPI_DECLARE_ERROR_FUNCTIONS(SharemindFacilityModulePis)
+SHAREMIND_TAG_FUNCTIONS_DECLARE(SharemindFacilityModulePis,,)
+
+void SharemindFacilityModulePis_destroy(
+        SharemindFacilityModulePis * modPis)
+        __attribute__ ((nonnull(1)));
 
 
 /*******************************************************************************

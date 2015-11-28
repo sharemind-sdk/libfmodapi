@@ -22,6 +22,7 @@
 
 #include <sharemind/extern_c.h>
 #include <sharemind/libmodapi/api_0x1.h>
+#include <sharemind/libprocessfacility.h>
 #include <sharemind/preprocessor.h>
 #include "api.h"
 
@@ -165,6 +166,55 @@ typedef void (* SharemindFacilityModuleApi0x1Deinitializer)(
     SharemindFacilityModuleApi0x1_findPdpiFacility( \
             SharemindFacilityModuleApi0x1ModuleContext * c, \
             const char * signature)
+
+/*******************************************************************************
+  Process specific instance
+*******************************************************************************/
+
+typedef struct SharemindFacilityModuleApi0x1PiWrapper_
+        SharemindFacilityModuleApi0x1PiWrapper;
+
+struct SharemindFacilityModuleApi0x1PiWrapper_ {
+
+    /**
+      A handle for module instance data. Inside SHAREMIND_syscall_context and
+      others, this handle is also passed to facilities provided by this module.
+    */
+    void * SHAREMIND_ICONST moduleHandle;
+
+    /**
+      The module configuration string.
+      \note Might be NULL if empty.
+    */
+    const char * SHAREMIND_ICONST conf;
+
+    /** A handle for facility module per-process data. */
+    void * processHandle;
+
+    /** Sharemind process Id */
+    SHAREMIND_ICONST SharemindProcessId processId;
+};
+
+/** Process initialization function signature */
+typedef SharemindFacilityModuleApi0x1Error
+(* SharemindFacilityModuleApi0x1PiStartup)(
+                SharemindFacilityModuleApi0x1PiWrapper *,
+                char const ** errorStr);
+
+#define SHAREMIND_FACILITY_MODULE_API_0x1_PI_STARTUP(c,errorStr) \
+    SharemindFacilityModuleApi0x1Error \
+        SharemindFacilityModuleApi0x1_Pi_startup( \
+            SharemindFacilityModuleApi0x1PiWrapper * c, \
+            char const ** errorStr)
+
+
+/** Process deinitialization function signature */
+typedef void (* SharemindFacilityModuleApi0x1PiShutdown)(
+        SharemindFacilityModuleApi0x1PiWrapper *);
+
+#define SHAREMIND_FACILITY_MODULE_API_0x1_PI_SHUTDOWN(c) \
+    void SharemindFacilityModuleApi0x1_Pi_shutdown( \
+            SharemindFacilityModuleApi0x1PiWrapper * c)
 
 SHAREMIND_EXTERN_C_END
 

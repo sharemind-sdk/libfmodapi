@@ -29,8 +29,11 @@
 
 
 typedef SharemindFacilityModuleApi0x1ModuleContext ModuleContext;
+typedef SharemindFacilityModuleApi0x1PiWrapper PiWrapper;
 typedef SharemindFacilityModuleApi0x1Initializer ModuleInitializer;
 typedef SharemindFacilityModuleApi0x1Deinitializer ModuleDeinitializer;
+typedef SharemindFacilityModuleApi0x1PiStartup PiStartup;
+typedef SharemindFacilityModuleApi0x1PiShutdown PiShutdown;
 typedef SharemindFacilityModuleApi0x1FacilityGetter FacilityGetter;
 
 typedef struct {
@@ -60,6 +63,8 @@ MODULE_CONTEXT_GETTER_DEFINE(Pdpi)
 typedef struct {
     ModuleInitializer initializer;
     ModuleDeinitializer deinitializer;
+    PiStartup starter;
+    PiShutdown stopper;
     FacilityGetter moduleFacilityGetter;
     FacilityGetter pdFacilityGetter;
     FacilityGetter pdpiFacilityGetter;
@@ -99,6 +104,19 @@ bool SharemindFacilityModule_load_0x1(SharemindFacilityModule * m) {
                     "deinit\"!");
         goto loadModule_0x1_fail_1;
     }
+
+    /* Handle startup function: */
+    apiData->starter =
+            (PiStartup) dlsym(m->libHandle,
+                              "SharemindFacilityModuleApi0x1_Pi_startup");
+
+    /* Handle shutdown function: */
+    apiData->stopper =
+            (PiShutdown) dlsym(m->libHandle,
+                              "SharemindFacilityModuleApi0x1_Pi_shutdown");
+
+    /* it is invalid to have one and not the other */
+    assert((!apiData->starter) == (!apiData->stopper));
 
     /* Handle facility getter functions: */
     #define FINDGETTER(name,Name) \
@@ -199,6 +217,56 @@ void SharemindFacilityModule_deinit_0x1(SharemindFacilityModule * const m) {
         }
     };
     apiData->deinitializer(&apiContext.moduleContext);
+}
+
+SharemindFacilityModuleApiError SharemindFacilityModule_Pi_startup_0x1(
+        SharemindFacilityModule * const m,
+        SharemindFacilityModuleApi0x1PiWrapper * wrapper)
+{
+    ApiData * const apiData = (ApiData *) m->apiData;
+
+    char const * errorStr = NULL;
+    if (!apiData->starter)
+        return SHAREMIND_FACILITY_MODULE_API_0x1_OK;
+
+    switch (apiData->starter(wrapper, &errorStr)) {
+        case SHAREMIND_FACILITY_MODULE_API_0x1_OK:
+            return SHAREMIND_FACILITY_MODULE_API_OK;
+        #define SHAREMIND_EC(theirs,ours) \
+            case SHAREMIND_FACILITY_MODULE_API_0x1_ ## theirs: \
+                SharemindFacilityModule_setError( \
+                        m, \
+                        SHAREMIND_FACILITY_MODULE_API_ ## ours, \
+                        errorStr \
+                        ? errorStr \
+                        : "Facility module returned " #theirs "!"); \
+                return SHAREMIND_FACILITY_MODULE_API_ ## ours
+        #define SHAREMIND_EC2(e) SHAREMIND_EC(e,e)
+        SHAREMIND_EC2(OUT_OF_MEMORY);
+        SHAREMIND_EC2(IMPLEMENTATION_LIMITS_REACHED);
+        SHAREMIND_EC2(SHAREMIND_ERROR);
+        SHAREMIND_EC2(MODULE_ERROR);
+        SHAREMIND_EC(GENERAL_ERROR, MODULE_ERROR);
+        SHAREMIND_EC2(INVALID_CONFIGURATION);
+        #undef SHAREMIND_EC2
+        #undef SHAREMIND_EC
+        default:
+            SharemindFacilityModule_setError(
+                        m,
+                        SHAREMIND_FACILITY_MODULE_API_API_ERROR,
+                        "Facility module returned an unexpected error!");
+            return SHAREMIND_FACILITY_MODULE_API_API_ERROR;
+    }
+}
+
+void SharemindFacilityModule_Pi_shutdown_0x1(
+        SharemindFacilityModule * const m,
+        SharemindFacilityModuleApi0x1PiWrapper * wrapper)
+{
+    ApiData * const apiData = (ApiData *) m->apiData;
+
+    if (apiData->stopper)
+        apiData->stopper(wrapper);
 }
 
 #define SHAREMIND_LIBFMODAPI_MODULE_0x1_DEFINE_METHODS(name,Name) \
