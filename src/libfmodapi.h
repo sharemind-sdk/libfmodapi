@@ -52,15 +52,15 @@ SHAREMIND_EXTERN_C_BEGIN
             ClassName,, \
             SharemindFacilityModuleApiError,)
 
-#define SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS__(ClassName,Name) \
+#define SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS_(ClassName,Name) \
     SharemindFacility const * ClassName ## _find ## Name ## Facility( \
             const ClassName * m, \
             const char * signature) __attribute__ ((nonnull(1, 2)))
 
 #define SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS(ClassName) \
-    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS__(ClassName,Module);\
-    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS__(ClassName,Pd); \
-    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS__(ClassName,Pdpi)
+    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS_(ClassName,Module);\
+    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS_(ClassName,Pd); \
+    SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS_(ClassName,Pdpi)
 
 
 /*******************************************************************************
@@ -180,7 +180,7 @@ void SharemindFacilityModulePis_destroy(
 
 #undef SHAREMIND_LIBFMODAPI_DECLARE_ERROR_FUNCTIONS
 #undef SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS
-#undef SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS__
+#undef SHAREMIND_LIBFMODAPI_DECLARE_FACILITY_FUNCTIONS_
 
 
 SHAREMIND_EXTERN_C_END
