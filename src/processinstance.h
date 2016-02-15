@@ -49,9 +49,6 @@ SHAREMIND_VECTOR_DEFINE_BODY(SharemindFacilityModulesPiVector,)
 SHAREMIND_VECTOR_DECLARE_PUSH(SharemindFacilityModulesPiVector,,
                               SHAREMIND_COMMA visibility("internal"))
 
-struct SharemindFacilityModulePis_;
-typedef struct SharemindFacilityModulePis_ SharemindFacilityModulePis;
-
 struct SharemindFacilityModulePis_ {
 
     SHAREMIND_RECURSIVE_LOCK_DECLARE_FIELDS;
