@@ -161,13 +161,15 @@ SharemindFacilityModule * SharemindFacilityModuleApi_newModule(
         goto SharemindFacilityModule_new_fail_6;
 
     /* Register with SharemindFacilityModuleApi: */
-    SharemindFacilityModule ** const p =
-            SharemindFacilityModulesVector_push(&modapi->modules);
-    if (unlikely(!p)) {
-        SharemindFacilityModuleApi_setErrorOom(modapi);
-        goto SharemindFacilityModule_new_fail_7;
+    {
+        SharemindFacilityModule ** const p =
+                SharemindFacilityModulesVector_push(&modapi->modules);
+        if (unlikely(!p)) {
+            SharemindFacilityModuleApi_setErrorOom(modapi);
+            goto SharemindFacilityModule_new_fail_7;
+        }
+        (*p) = m;
     }
-    (*p) = m;
     SharemindFacilityModuleApi_unlock(modapi);
     return m;
 

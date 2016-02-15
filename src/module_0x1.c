@@ -227,7 +227,7 @@ SharemindFacilityModuleApiError SharemindFacilityModule_Pi_startup_0x1(
 
     char const * errorStr = NULL;
     if (!apiData->starter)
-        return SHAREMIND_FACILITY_MODULE_API_0x1_OK;
+        return SHAREMIND_FACILITY_MODULE_API_OK;
 
     switch (apiData->starter(wrapper, &errorStr)) {
         case SHAREMIND_FACILITY_MODULE_API_0x1_OK:
