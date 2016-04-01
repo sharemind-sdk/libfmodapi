@@ -51,10 +51,9 @@ SharemindFacilityModuleApiError SharemindFacilityModule_Pi_startup_0x1(
         SharemindFacilityModuleApi0x1PiWrapper * wrapper)
         __attribute__ ((nonnull(1,2), visibility("internal")));
 
-void SharemindFacilityModule_Pi_shutdown_0x1(
-        SharemindFacilityModule * m,
-        SharemindFacilityModuleApi0x1PiWrapper * wrapper)
-        __attribute__ ((nonnull(1,2), visibility("internal")));
+void SharemindFacilityModule_Pi_shutdown_0x1(SharemindFacilityModule * m,
+                                             void * processHandle)
+        __attribute__ ((nonnull(1), visibility("internal")));
 
 #define SHAREMIND_LIBFMODAPI_MODULE_0x1_DECLARE_METHODS(name,Name) \
     size_t SharemindFacilityModule_num ## Name ## Facilities_0x1( \

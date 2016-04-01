@@ -56,7 +56,11 @@ typedef enum {
     SHAREMIND_FACILITY_MODULE_API_0x1_GENERAL_ERROR,
 
     /** The module configuration given was invalid or erroneous. */
-    SHAREMIND_FACILITY_MODULE_API_0x1_INVALID_CONFIGURATION
+    SHAREMIND_FACILITY_MODULE_API_0x1_INVALID_CONFIGURATION,
+
+    /** SharemindFacilityModuleApi0x1PiWrapper::setProcessFacility() returned
+        failure. */
+    SHAREMIND_FACILITY_MODULE_API_0x1_USER_SET_PROCESS_FACILITY_FAILURE
 
 } SharemindFacilityModuleApi0x1Error;
 #endif
@@ -68,7 +72,8 @@ typedef enum {
     ((SHAREMIND_FACILITY_MODULE_API_0x1_SHAREMIND_ERROR,)) \
     ((SHAREMIND_FACILITY_MODULE_API_0x1_MODULE_ERROR,)) \
     ((SHAREMIND_FACILITY_MODULE_API_0x1_GENERAL_ERROR,)) \
-    ((SHAREMIND_FACILITY_MODULE_API_0x1_INVALID_CONFIGURATION,))
+    ((SHAREMIND_FACILITY_MODULE_API_0x1_INVALID_CONFIGURATION,)) \
+    ((SHAREMIND_FACILITY_MODULE_API_0x1_USER_SET_PROCESS_FACILITY_FAILURE,))
 SHAREMIND_ENUM_CUSTOM_DEFINE(SharemindFacilityModuleApi0x1Error,
                              SHAREMIND_FACILITY_MODULE_API_0x1_ERROR_ENUM);
 
@@ -191,8 +196,9 @@ struct SharemindFacilityModuleApi0x1PiWrapper_ {
     /** A handle for facility module per-process data. */
     void * processHandle;
 
-    /** Sharemind process Id */
-    SHAREMIND_ICONST SharemindProcessId processId;
+    bool (* setProcessFacility)(SharemindFacilityModuleApi0x1PiWrapper * const w,
+                                char const * name,
+                                void * facility);
 };
 
 /** Process initialization function signature */
@@ -209,12 +215,10 @@ typedef SharemindFacilityModuleApi0x1Error
 
 
 /** Process deinitialization function signature */
-typedef void (* SharemindFacilityModuleApi0x1PiShutdown)(
-        SharemindFacilityModuleApi0x1PiWrapper *);
+typedef void (* SharemindFacilityModuleApi0x1PiShutdown)(void * processHandle);
 
 #define SHAREMIND_FACILITY_MODULE_API_0x1_PI_SHUTDOWN(c) \
-    void SharemindFacilityModuleApi0x1_Pi_shutdown( \
-            SharemindFacilityModuleApi0x1PiWrapper * c)
+    void SharemindFacilityModuleApi0x1_Pi_shutdown(void * processHandle)
 
 SHAREMIND_EXTERN_C_END
 

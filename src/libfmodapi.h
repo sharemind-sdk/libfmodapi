@@ -85,6 +85,7 @@ typedef struct SharemindFacilityModulePis_ SharemindFacilityModulePis;
     ((SHAREMIND_FACILITY_MODULE_API_INVALID_MODULE,)) \
     ((SHAREMIND_FACILITY_MODULE_API_API_NOT_SUPPORTED,)) \
     ((SHAREMIND_FACILITY_MODULE_API_API_ERROR,)) \
+    ((SHAREMIND_FACILITY_MODULE_API_USER_SET_PROCESS_FACILITY_FAILURE,)) \
     ((SHAREMIND_FACILITY_MODULE_API_DUPLICATE_MODULE_FACILITY,)) \
     ((SHAREMIND_FACILITY_MODULE_API_DUPLICATE_PD_FACILITY,)) \
     ((SHAREMIND_FACILITY_MODULE_API_DUPLICATE_PDPI_FACILITY,)) \
@@ -96,6 +97,15 @@ SHAREMIND_ENUM_CUSTOM_DEFINE(SharemindFacilityModuleApiError,
                              SHAREMIND_FACILITY_MODULE_API_ERROR_ENUM);
 SHAREMIND_ENUM_DECLARE_TOSTRING(SharemindFacilityModuleApiError);
 
+struct SharemindFacilityModulePisContext_;
+typedef struct SharemindFacilityModulePisContext_
+        SharemindFacilityModulePisContext;
+struct SharemindFacilityModulePisContext_ {
+    void * context;
+    bool (* setProcessFacility)(SharemindFacilityModulePisContext * context,
+                                char const * name,
+                                void * facility);
+};
 
 /*******************************************************************************
   SharemindFacilityModuleApi
@@ -121,7 +131,7 @@ SharemindFacilityModule * SharemindFacilityModuleApi_newModule(
 
 SharemindFacilityModulePis * SharemindFacilityModuleApi_newProcessInstance(
         SharemindFacilityModuleApi * modapi,
-        SharemindProcessId uniqueId,
+        SharemindFacilityModulePisContext * context,
         SharemindFacilityModuleApiError * error,
         const char ** errorStr)
         __attribute__((nonnull(1)));

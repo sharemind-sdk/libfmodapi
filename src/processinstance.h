@@ -40,6 +40,7 @@ struct WrapperContext_;
 typedef struct WrapperContext_ WrapperContext;
 struct WrapperContext_ {
     SharemindFacilityModule * module;
+    SharemindFacilityModulePisContext * initCtx;
     SharemindFacilityModuleApi0x1PiWrapper wrapper;
 };
 

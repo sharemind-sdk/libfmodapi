@@ -248,6 +248,7 @@ SharemindFacilityModuleApiError SharemindFacilityModule_Pi_startup_0x1(
         SHAREMIND_EC2(MODULE_ERROR);
         SHAREMIND_EC(GENERAL_ERROR, MODULE_ERROR);
         SHAREMIND_EC2(INVALID_CONFIGURATION);
+        SHAREMIND_EC2(USER_SET_PROCESS_FACILITY_FAILURE);
         #undef SHAREMIND_EC2
         #undef SHAREMIND_EC
         default:
@@ -261,12 +262,12 @@ SharemindFacilityModuleApiError SharemindFacilityModule_Pi_startup_0x1(
 
 void SharemindFacilityModule_Pi_shutdown_0x1(
         SharemindFacilityModule * const m,
-        SharemindFacilityModuleApi0x1PiWrapper * wrapper)
+        void * processHandle)
 {
     ApiData * const apiData = (ApiData *) m->apiData;
 
     if (apiData->stopper)
-        apiData->stopper(wrapper);
+        apiData->stopper(processHandle);
 }
 
 #define SHAREMIND_LIBFMODAPI_MODULE_0x1_DEFINE_METHODS(name,Name) \

@@ -28,6 +28,27 @@
 
 static inline void WrapperContext_free(WrapperContext * context);
 
+static inline WrapperContext * piWrapperToWrapperContext(
+        SharemindFacilityModuleApi0x1PiWrapper * w)
+{
+    return (WrapperContext *)(void *)(((char *) w)
+                                      - offsetof(WrapperContext, wrapper));
+}
+
+static bool setProcessFacility_(SharemindFacilityModuleApi0x1PiWrapper * w,
+                                char const * name,
+                                void * facility)
+{
+    assert(w);
+    assert(name);
+    assert(facility);
+    SharemindFacilityModulePisContext * const initCtx =
+            piWrapperToWrapperContext(w)->initCtx;
+    if (!initCtx || !initCtx->setProcessFacility)
+        return false;
+    return initCtx->setProcessFacility(initCtx, name, facility);
+}
+
 SHAREMIND_VECTOR_DEFINE_INIT(SharemindFacilityModulesPiVector, static inline)
 SHAREMIND_VECTOR_DEFINE_REVERSE_DESTROY_WITH(
         SharemindFacilityModulesPiVector,
@@ -44,7 +65,7 @@ SHAREMIND_VECTOR_DEFINE_FOREACH(
         initPis,
         static inline SharemindFacilityModuleApiError,,
         SHAREMIND_COMMA SharemindFacilityModulePis * modApis
-        SHAREMIND_COMMA SharemindProcessId uniqueId,,
+        SHAREMIND_COMMA SharemindFacilityModulePisContext * initCtx,,
         SHAREMIND_FACILITY_MODULE_API_OK,
         /* the inside of the loop */
         SharemindFacilityModule * m = *value;
@@ -57,10 +78,11 @@ SHAREMIND_VECTOR_DEFINE_FOREACH(
             return SHAREMIND_FACILITY_MODULE_API_OUT_OF_MEMORY;
 
         context->module = m;
+        context->initCtx = initCtx;
         context->wrapper.moduleHandle = m->moduleHandle;
         context->wrapper.conf = m->conf;
         context->wrapper.processHandle = NULL;
-        context->wrapper.processId = uniqueId;
+        context->wrapper.setProcessFacility = &setProcessFacility_;
 
         SharemindFacilityModuleApiError er =
             m->api->modulePiStartup(m, &context->wrapper);
@@ -73,7 +95,7 @@ SHAREMIND_VECTOR_DEFINE_FOREACH(
         WrapperContext ** const p = 
             SharemindFacilityModulesPiVector_push(&modApis->instances);
         if (unlikely(!p)) {
-            m->api->modulePiShutdown(m, &context->wrapper);
+            m->api->modulePiShutdown(m, context->wrapper.processHandle);
             free(context);
             return SHAREMIND_FACILITY_MODULE_API_OUT_OF_MEMORY;
         }
@@ -82,7 +104,7 @@ SHAREMIND_VECTOR_DEFINE_FOREACH(
 
 SharemindFacilityModulePis * SharemindFacilityModuleApi_newProcessInstance(
         SharemindFacilityModuleApi * modapi,
-        SharemindProcessId uniqueId,
+        SharemindFacilityModulePisContext * context,
         SharemindFacilityModuleApiError * error,
         const char ** errorStr)
 {
@@ -104,7 +126,7 @@ SharemindFacilityModulePis * SharemindFacilityModuleApi_newProcessInstance(
         SharemindFacilityModulesVector_initPis(
             &modapi->modules,
             modPis,
-            uniqueId);
+            context);
     if (err != SHAREMIND_FACILITY_MODULE_API_OK) {
         if (error)
             (*error) = err;
@@ -152,7 +174,8 @@ void SharemindFacilityModulePis_destroy(
 static inline void WrapperContext_free(WrapperContext * context) {
     assert(context);
     assert(context->module);
-    context->module->api->modulePiShutdown( context->module, &context->wrapper);
+    context->module->api->modulePiShutdown(context->module,
+                                           &context->wrapper.processHandle);
     free(context);
 }
 

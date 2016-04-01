@@ -50,7 +50,7 @@ typedef struct {
 
     void (* const modulePiShutdown)(
             SharemindFacilityModule * m,
-            SharemindFacilityModuleApi0x1PiWrapper * wrapper);
+            void * processHandle);
 
     #define SHAREMIND_LIBFMODAPI_APIS_DEFINE_METHODS(name,Name) \
         SharemindFacility const * (* const find ## Name ## Facility)( \
