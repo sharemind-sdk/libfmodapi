@@ -240,9 +240,8 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init(
         return SHAREMIND_FACILITY_MODULE_API_OK;
     }
     const SharemindFacilityModuleApiError e = (*(m->api->moduleInit))(m);
-    if (likely(e == SHAREMIND_FACILITY_MODULE_API_OK)) {
+    if (likely(e == SHAREMIND_FACILITY_MODULE_API_OK))
         m->isInitialized = true;
-    }
     SharemindFacilityModule_unlock(m);
     return e;
 }
