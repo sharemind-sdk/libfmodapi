@@ -156,7 +156,7 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
     ApiContext apiContext = {
         m->modapi,
         {
-            .moduleHandle = NULL, /* Just in case */
+            .moduleHandle = NULL,
             .conf = m->conf,
             .findModuleFacility = &ModuleContext_findModuleFacility,
             .findPdFacility = &ModuleContext_findPdFacility,
@@ -166,14 +166,6 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
     char const * errorStr = NULL;
     switch (apiData->initializer(&apiContext.moduleContext, &errorStr)) {
         case SHAREMIND_FACILITY_MODULE_API_0x1_OK:
-            if (!apiContext.moduleContext.moduleHandle) {
-                apiData->deinitializer(&apiContext.moduleContext);
-                SharemindFacilityModule_setError(
-                            m,
-                            SHAREMIND_FACILITY_MODULE_API_API_ERROR,
-                            "Facility module handle was not initialized!");
-                return SHAREMIND_FACILITY_MODULE_API_API_ERROR;
-            }
             m->moduleHandle = apiContext.moduleContext.moduleHandle;
             return SHAREMIND_FACILITY_MODULE_API_OK;
         #define SHAREMIND_EC(theirs,ours) \
