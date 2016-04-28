@@ -175,7 +175,7 @@ static inline void WrapperContext_free(WrapperContext * context) {
     assert(context);
     assert(context->module);
     context->module->api->modulePiShutdown(context->module,
-                                           &context->wrapper.processHandle);
+                                           context->wrapper.processHandle);
     free(context);
 }
 
