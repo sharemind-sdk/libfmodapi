@@ -241,7 +241,6 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init(
     }
     const SharemindFacilityModuleApiError e = (*(m->api->moduleInit))(m);
     if (likely(e == SHAREMIND_FACILITY_MODULE_API_OK)) {
-        assert(m->moduleHandle);
         m->isInitialized = true;
     }
     SharemindFacilityModule_unlock(m);
