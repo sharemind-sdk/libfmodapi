@@ -184,6 +184,7 @@ SharemindFacilityModuleApiError SharemindFacilityModule_init_0x1(
         SHAREMIND_EC2(MODULE_ERROR);
         SHAREMIND_EC(GENERAL_ERROR, MODULE_ERROR);
         SHAREMIND_EC2(INVALID_CONFIGURATION);
+        SHAREMIND_EC2(USER_SET_PROCESS_FACILITY_FAILURE);
         #undef SHAREMIND_EC2
         #undef SHAREMIND_EC
         default:
