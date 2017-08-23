@@ -17,20 +17,12 @@
 # For further information, please contact us at sharemind@cyber.ee.
 #
 
-SET(PACKAGE_VERSION "@LIBFMODAPI_VERSION@")
-IF(NOT SharemindLibfmodapi_QUIET)
-    MESSAGE(STATUS "Sharemind libfmodapi version: ${PACKAGE_VERSION}")
-ENDIF()
+# This file defines the following variables:
+#   SharemindLibFModapi_INCLUDE_DIRS - include directories
+#   SharemindLibFModapi_LIBRARIES    - libraries to link against
+#   SharemindLibFModapi_DEFINITIONS  - required compiler definitions
 
-IF("${PACKAGE_VERSION}" VERSION_EQUAL "${PACKAGE_FIND_VERSION}")
-  SET(PACKAGE_VERSION_EXACT TRUE)
-ELSE()
-  SET(PACKAGE_VERSION_EXACT FALSE)
-ENDIF()
-IF(("${PACKAGE_VERSION}" VERSION_LESS "${PACKAGE_FIND_VERSION}")
-   OR ("${PACKAGE_FIND_VERSION}" VERSION_LESS "@LIBFMODAPI_COMPAT_VERSION@"))
-  SET(PACKAGE_VERSION_COMPATIBLE FALSE)
-ELSE()
-  SET(PACKAGE_VERSION_COMPATIBLE TRUE)
-ENDIF()
 
+SET(SharemindLibFModapi_INCLUDE_DIRS @SharemindLibFModapi_INSTALL_INCLUDE_DIRS@)
+SET(SharemindLibFModapi_LIBRARIES @SharemindLibFModapi_INSTALL_LINK_LIBRARIES@)
+SET(SharemindLibFModapi_DEFINITIONS @SharemindLibFModapi_INSTALL_DEFINITIONS@)

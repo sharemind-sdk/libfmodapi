@@ -17,112 +17,127 @@
 # For further information, please contact us at sharemind@cyber.ee.
 #
 
-CMAKE_MINIMUM_REQUIRED(VERSION "2.8.12")
-PROJECT("SHAREMIND_LIBFMODAPI" "C")
-SET(LIBFMODAPI_VERSION "0.1.0.0")
-SET(LIBFMODAPI_COMPAT_VERSION "0.1.0.0")
+CMAKE_MINIMUM_REQUIRED(VERSION "3.0")
+PROJECT(SharemindLibFModapi VERSION "0.1.0" LANGUAGES "C")
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
+FIND_PACKAGE(SharemindCMakeHelpers REQUIRED)
+
+SharemindSetProjectVersion()
+SET(SharemindLibFModapi_COMPAT_VERSION "${SharemindLibFModapi_VERSION}")
+
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
 FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
 FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
-INCLUDE_DIRECTORIES(
-    ${SharemindCHeaders_INCLUDE_DIRS}
-    ${SharemindLibModapi_INCLUDE_DIRS}
-    ${SharemindLibProcessFacility_INCLUDE_DIRS}
-)
-
-ADD_COMPILE_OPTIONS(
-    "-std=c99" "-O2" "-fwrapv" "-Wall" "-Wextra" "-Wunused" "-Wabi"
-    "-Wstrict-aliasing=1" "-Wbad-function-cast" "-Wformat" "-Wswitch-default"
-    "-Wfloat-equal" "-Wshadow" "-Wpointer-arith" "-Wcast-qual"
-    "-Wstrict-prototypes" "-Wconversion" "-Wsign-conversion" "-Wunused-macros"
-    "$<$<NOT:$<STREQUAL:$<CONFIGURATION>,Release>>:-ggdb>"
-    "$<$<NOT:$<STREQUAL:$<CONFIGURATION>,Release>>:-fno-omit-frame-pointer>"
-    "$<$<STREQUAL:$<CONFIGURATION>,Release>:-DNDEBUG>"
-    "$<$<STREQUAL:$<CONFIGURATION>,Release>:-fomit-frame-pointer>"
-)
-
-INCLUDE(CheckCCompilerFlag)
-FUNCTION(CHECK_ADD_COMPILER_FLAG flag)
-    STRING(SUBSTRING "${flag}" 1 -1 FlagName)
-    CHECK_C_COMPILER_FLAG("${flag}" C_COMPILER_HAS_${FlagName}_FLAG)
-    IF(C_COMPILER_HAS_${FlagName}_FLAG)
-        ADD_COMPILE_OPTIONS("${flag}")
-    ENDIF()
-ENDFUNCTION()
-CHECK_ADD_COMPILER_FLAG("-Weverything")
-CHECK_ADD_COMPILER_FLAG("-Wlogical-op")
-CHECK_ADD_COMPILER_FLAG("-Wno-covered-switch-default")
-CHECK_ADD_COMPILER_FLAG("-Wno-padded")
-
-SET(LIBFMODAPI_INSTALL_DEFINITIONS "-D__STDC_LIMIT_MACROS"
-                                   "-D_XOPEN_SOURCE=700")
-ADD_DEFINITIONS(
-    ${SharemindCHeaders_DEFINITIONS}
-    ${SharemindLibModapi_DEFINITIONS}
-    ${SharemindLibProcessFacility_DEFINITIONS}
-    ${LIBFMODAPI_INSTALL_DEFINITIONS})
-
 
 
 ################################################################################
 # libfmodapi
 ################################################################################
 
-SET(SHAREMIND_LIBFMODAPI_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/libfmodapi.h"
+# Headers:
+SET(SharemindLibFModapi_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/libfmodapi.h")
+INSTALL(FILES ${SharemindLibFModapi_HEADERS}
+        DESTINATION "include/sharemind/libfmodapi"
+        COMPONENT "dev")
+
+# API headers:
+SET(SharemindLibFModapi_API_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/api.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/api_0x1.h"
 )
+INSTALL(FILES ${SharemindLibFModapi_API_HEADERS}
+        DESTINATION "include/sharemind/libfmodapi"
+        COMPONENT "api-dev")
 
-FILE(GLOB_RECURSE SHAREMIND_LIBFMODAPI_HEADERS_P
+# The library:
+FILE(GLOB_RECURSE SharemindLibFModapi_HEADERS_P
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
-LIST(REMOVE_ITEM SHAREMIND_LIBFMODAPI_HEADERS_P ${SHAREMIND_LIBFMODAPI_HEADERS})
-
-IF(NOT SHAREMIND_LIBFMODAPI_LINKING_MODE)
-    SET(SHAREMIND_LIBFMODAPI_LINKING_MODE SHARED)
-ENDIF()
-
-FILE(GLOB_RECURSE SHAREMIND_LIBFMODAPI_SOURCES
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
-ADD_LIBRARY("libfmodapi" ${SHAREMIND_LIBFMODAPI_LINKING_MODE}
-            ${SHAREMIND_LIBFMODAPI_SOURCES}
-            ${SHAREMIND_LIBFMODAPI_HEADERS}
-            ${SHAREMIND_LIBFMODAPI_HEADERS_P}
+LIST(REMOVE_ITEM SharemindLibFModapi_HEADERS_P
+    ${SharemindLibFModapi_HEADERS}
+    ${SharemindLibFModapi_API_HEADERS}
 )
-STRING(REGEX REPLACE "(([^\\.]+\\.[^\\.]+)\\.).*" "\\2" LIBFMODAPI_SOVERSION
-                     "${LIBFMODAPI_VERSION}")
-SET_TARGET_PROPERTIES("libfmodapi" PROPERTIES
-                      OUTPUT_NAME "sharemind_fmodapi"
-                      VERSION "${LIBFMODAPI_VERSION}"
-                      SOVERSION "${LIBFMODAPI_SOVERSION}")
-TARGET_LINK_LIBRARIES("libfmodapi" "-ldl")
-
-INSTALL(TARGETS "libfmodapi"
-        LIBRARY DESTINATION "lib")
-
-INSTALL(FILES ${SHAREMIND_LIBFMODAPI_HEADERS}
-        DESTINATION "include/sharemind/libfmodapi")
+FILE(GLOB_RECURSE SharemindLibFModapi_SOURCES
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+SharemindSetC99CompileOptions(COMPILE_FLAGS "-fwrapv")
+SharemindAddSharedLibrary("libfmodapi"
+    SOURCES
+        ${SharemindLibFModapi_SOURCES}
+        ${SharemindLibFModapi_HEADERS}
+        ${SharemindLibFModapi_API_HEADERS}
+        ${SharemindLibFModapi_HEADERS_P}
+    OUTPUT_NAME "sharemind_fmodapi"
+    INCLUDE_DIRECTORIES
+        ${SharemindCHeaders_INCLUDE_DIRS}
+        ${SharemindLibModapi_INCLUDE_DIRS}
+        ${SharemindLibProcessFacility_INCLUDE_DIRS}
+    LEGACY_DEFINITIONS
+        ${SharemindCHeaders_DEFINITIONS}
+        ${SharemindLibModapi_DEFINITIONS}
+        ${SharemindLibProcessFacility_DEFINITIONS}
+    COMPILE_DEFINITIONS
+        "_XOPEN_SOURCE=700"
+    LINK_LIBRARIES
+        "-ldl"
+)
 
 # Install cmake files:
-FILE(GLOB_RECURSE sharemind_LIBFMODAPI_in_files
-     "${CMAKE_CURRENT_SOURCE_DIR}/*.in")
-ADD_CUSTOM_TARGET("include_sharemind_libfmodapi_in_files_in_IDE"
-                  SOURCES ${sharemind_LIBFMODAPI_in_files})
-SET(LIBFMODAPI_INSTALL_LINK_LIBRARIES "-L${CMAKE_INSTALL_PREFIX}/lib"
-                                      "-lsharemind_fmodapi")
-SET(LIBFMODAPI_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+SET(SharemindLibFModapi_INSTALL_LINK_LIBRARIES "-L${CMAKE_INSTALL_PREFIX}/lib"
+                                               "-lsharemind_fmodapi")
+SET(SharemindLibFModapi_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+SET(SharemindLibFModapi_INSTALL_DEFINITIONS "-D__STDC_LIMIT_MACROS"
+                                            "-D_XOPEN_SOURCE=700")
+SharemindUseCMakeFindFiles(COMPONENT "common-dev")
 
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/SharemindLibfmodapiConfig.cmake.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/SharemindLibfmodapiConfig.cmake"
-               @ONLY)
-CONFIGURE_FILE(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindLibfmodapiConfigVersion.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SharemindLibfmodapiConfigVersion.cmake" @ONLY)
-INSTALL(FILES
-            "${CMAKE_CURRENT_BINARY_DIR}/SharemindLibfmodapiConfig.cmake"
-            "${CMAKE_CURRENT_BINARY_DIR}/SharemindLibfmodapiConfigVersion.cmake"
-        DESTINATION "lib/SharemindLibfmodapi")
+
+# Packaging:
+SharemindSetupPackaging()
+SharemindAddComponentPackage("lib"
+    NAME "libsharemind-fmodapi"
+    DESCRIPTION "Sharemind Facility Module API library"
+    DEB_SECTION "libs"
+    DEB_DEPENDS "libc6 (>= 2.19)"
+)
+SharemindAddComponentPackage("common-dev"
+    NAME "libsharemind-fmodapi-common-dev"
+    DESCRIPTION "Sharemind Facility Module API library common development files"
+    DEB_SECTION "libdevel"
+)
+SharemindAddComponentPackage("api-dev"
+    NAME "libsharemind-fmodapi-api-dev"
+    DESCRIPTION "Sharemind Facility Module API library API headers"
+    DEB_SECTION "libdevel"
+    DEB_DEPENDS
+        "libsharemind-fmodapi-common-dev (= ${SharemindLibFModapi_VERSION})"
+        "libsharemind-modapi-api-dev (>= 0.3.0)"
+        "libsharemind-processfacility-api-dev"
+        "libsharemind-cheaders-dev (>= 0.1.0)"
+        "libc6-dev (>= 2.19)"
+)
+SharemindAddComponentPackage("dev"
+    NAME "libsharemind-fmodapi-dev"
+    DESCRIPTION "Sharemind Facility Module API library development headers"
+    DEB_SECTION "libdevel"
+    DEB_DEPENDS
+        "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
+        "libsharemind-fmodapi-common-dev (= ${SharemindLibFModapi_VERSION})"
+        "libsharemind-fmodapi-api-dev (= ${SharemindLibFModapi_VERSION})"
+        "libsharemind-modapi-dev (>= 0.3.0)"
+        "libsharemind-processfacility-api-dev"
+        "libsharemind-cheaders-dev (>= 0.1.0)"
+        "libc6-dev (>= 2.19)"
+        "libgcc-4.8-dev"
+        "| libgcc-4.9-dev"
+        "| libgcc-5-dev"
+        "| libgcc-6-dev"
+        "| libgcc-7-dev"
+)
+SharemindAddComponentPackage("debug"
+    NAME "libsharemind-fmodapi-dbg"
+    DESCRIPTION "Sharemind Facility Module API library debug symbols"
+    DEB_SECTION "debug"
+    DEB_DEPENDS "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
+)
+SharemindPackagingFinalize()
