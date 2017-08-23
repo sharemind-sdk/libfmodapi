@@ -26,11 +26,11 @@ INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
-FIND_PACKAGE(SharemindLibmodapi 0.3.0 REQUIRED)
+FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
 FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
 INCLUDE_DIRECTORIES(
     ${SharemindCHeaders_INCLUDE_DIRS}
-    ${SharemindLibmodapi_INCLUDE_DIRS}
+    ${SharemindLibModapi_INCLUDE_DIRS}
     ${SharemindLibProcessFacility_INCLUDE_DIRS}
 )
 
@@ -62,7 +62,7 @@ SET(LIBFMODAPI_INSTALL_DEFINITIONS "-D__STDC_LIMIT_MACROS"
                                    "-D_XOPEN_SOURCE=700")
 ADD_DEFINITIONS(
     ${SharemindCHeaders_DEFINITIONS}
-    ${SharemindLibmodapi_DEFINITIONS}
+    ${SharemindLibModapi_DEFINITIONS}
     ${SharemindLibProcessFacility_DEFINITIONS}
     ${LIBFMODAPI_INSTALL_DEFINITIONS})
 
