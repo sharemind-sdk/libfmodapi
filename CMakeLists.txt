@@ -31,6 +31,7 @@ SharemindSetProjectVersion()
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
 FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
 FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
+FIND_PACKAGE(SharemindModuleApis REQUIRED)
 
 
 ################################################################################
@@ -73,6 +74,7 @@ SharemindAddSharedLibrary("libfmodapi"
         ${SharemindCHeaders_INCLUDE_DIRS}
         ${SharemindLibModapi_INCLUDE_DIRS}
         ${SharemindLibProcessFacility_INCLUDE_DIRS}
+        ${SharemindModuleApis_INCLUDE_DIRS}
     LEGACY_DEFINITIONS
         ${SharemindCHeaders_DEFINITIONS}
         ${SharemindLibModapi_DEFINITIONS}
@@ -116,7 +118,7 @@ SharemindAddComponentPackage("api-dev"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
         "libsharemind-fmodapi-common-dev (= ${SharemindLibFModapi_VERSION})"
-        "libsharemind-modapi-api-dev (>= 0.3.0)"
+        "sharemind-module-apis-dev (>= 1.0.0)"
         "libsharemind-processfacility-api-dev"
         "libsharemind-cheaders-dev (>= 0.1.0)"
         "libc6-dev (>= 2.19)"

@@ -21,7 +21,7 @@
 #define SHAREMIND_LIBFMODAPI_API_0x1_H
 
 #include <sharemind/extern_c.h>
-#include <sharemind/libmodapi/api_0x1.h>
+#include <sharemind/module-apis/api_0x1.h>
 #include <sharemind/libprocessfacility.h>
 #include <sharemind/preprocessor.h>
 #include "api.h"
