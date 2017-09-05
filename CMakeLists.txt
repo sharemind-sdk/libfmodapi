@@ -26,7 +26,7 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 FIND_PACKAGE(SharemindCMakeHelpers REQUIRED)
 
 SharemindSetProjectVersion()
-SET(SharemindLibFModapi_COMPAT_VERSION "${SharemindLibFModapi_VERSION}")
+
 
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
 FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
@@ -84,12 +84,17 @@ SharemindAddSharedLibrary("libfmodapi"
 )
 
 # Install cmake files:
-SET(SharemindLibFModapi_INSTALL_LINK_LIBRARIES "-L${CMAKE_INSTALL_PREFIX}/lib"
-                                               "-lsharemind_fmodapi")
-SET(SharemindLibFModapi_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
-SET(SharemindLibFModapi_INSTALL_DEFINITIONS "-D__STDC_LIMIT_MACROS"
-                                            "-D_XOPEN_SOURCE=700")
-SharemindUseCMakeFindFiles(COMPONENT "common-dev")
+SharemindCreateCMakeFindFiles(
+    COMPONENT "common-dev"
+    INCLUDE_DIRS
+        "${CMAKE_INSTALL_PREFIX}/include"
+    DEFINITIONS
+        "-D__STDC_LIMIT_MACROS"
+        "-D_XOPEN_SOURCE=700"
+    LIBRARIES
+        "-L${CMAKE_INSTALL_PREFIX}/lib"
+        "-lsharemind_fmodapi"
+)
 
 
 # Packaging:
