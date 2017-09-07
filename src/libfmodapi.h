@@ -21,6 +21,7 @@
 #define SHAREMIND_LIBFMODAPI_LIBFMODAPI_H
 
 #include <sharemind/extern_c.h>
+#include <sharemind/facility-module-apis/api_0x1.h>
 #include <sharemind/lasterror.h>
 #include <sharemind/libmodapi/libmodapi.h>
 #include <sharemind/libprocessfacility.h>
@@ -29,7 +30,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "api_0x1.h"
 
 
 SHAREMIND_EXTERN_C_BEGIN
