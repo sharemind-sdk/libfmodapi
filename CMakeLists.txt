@@ -101,7 +101,6 @@ SharemindAddComponentPackage("dev"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
         "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
-        "libsharemind-fmodapi-api-dev (= ${SharemindLibFModapi_VERSION})"
         "libsharemind-modapi-dev (>= 0.3.0)"
         "libsharemind-processfacility-api-dev"
         "libsharemind-cheaders-dev (>= 0.1.0)"
