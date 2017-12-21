@@ -71,6 +71,7 @@ SharemindAddSharedLibrary("libfmodapi"
     COMPILE_DEFINITIONS
         "_XOPEN_SOURCE=700"
     LINK_LIBRARIES
+        ${SharemindCHeaders_LIBRARIES}
         "-ldl"
 )
 
