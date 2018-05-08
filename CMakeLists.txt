@@ -31,7 +31,7 @@ SharemindSetProjectVersion()
 FIND_PACKAGE(SharemindCHeaders REQUIRED)
 FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
 FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
-FIND_PACKAGE(SharemindModuleApis REQUIRED)
+FIND_PACKAGE(SharemindFacilityModuleApis REQUIRED)
 
 
 ################################################################################
@@ -63,11 +63,12 @@ SharemindAddSharedLibrary("libfmodapi"
         ${SharemindCHeaders_INCLUDE_DIRS}
         ${SharemindLibModapi_INCLUDE_DIRS}
         ${SharemindLibProcessFacility_INCLUDE_DIRS}
-        ${SharemindModuleApis_INCLUDE_DIRS}
+        ${SharemindFacilityModuleApis_INCLUDE_DIRS}
     LEGACY_DEFINITIONS
         ${SharemindCHeaders_DEFINITIONS}
         ${SharemindLibModapi_DEFINITIONS}
         ${SharemindLibProcessFacility_DEFINITIONS}
+        ${SharemindFacilityModuleApis_DEFINITIONS}
     COMPILE_DEFINITIONS
         "_XOPEN_SOURCE=700"
     LINK_LIBRARIES
