@@ -18,7 +18,7 @@
 #
 
 CMAKE_MINIMUM_REQUIRED(VERSION "3.0")
-PROJECT(SharemindLibFModapi VERSION "0.1.0" LANGUAGES "C")
+PROJECT(SharemindLibFModapi VERSION "0.3.0" LANGUAGES "CXX")
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
@@ -28,36 +28,31 @@ FIND_PACKAGE(SharemindCMakeHelpers REQUIRED)
 SharemindSetProjectVersion()
 
 
-FIND_PACKAGE(SharemindCHeaders REQUIRED)
-FIND_PACKAGE(SharemindLibModapi 0.3.0 REQUIRED)
-FIND_PACKAGE(SharemindLibProcessFacility REQUIRED)
-FIND_PACKAGE(SharemindFacilityModuleApis REQUIRED)
+FIND_PACKAGE(SharemindCxxHeaders 0.4.0 REQUIRED)
+FIND_PACKAGE(SharemindFacilityModuleApis 2.0.0 REQUIRED)
 
 
 ################################################################################
 # libfmodapi
 ################################################################################
 
+ADD_DEFINITIONS("-DSHAREMIND_INTERNAL_")
+
 # Headers:
-SET(SharemindLibFModapi_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/libfmodapi.h")
+FILE(GLOB_RECURSE SharemindLibFModapi_HEADERS
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 INSTALL(FILES ${SharemindLibFModapi_HEADERS}
         DESTINATION "include/sharemind/libfmodapi"
         COMPONENT "dev")
 
 # The library:
-FILE(GLOB_RECURSE SharemindLibFModapi_HEADERS_P
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
-LIST(REMOVE_ITEM SharemindLibFModapi_HEADERS_P
-    ${SharemindLibFModapi_HEADERS}
-)
 FILE(GLOB_RECURSE SharemindLibFModapi_SOURCES
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
-SharemindSetC99CompileOptions(COMPILE_FLAGS "-fwrapv")
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+SharemindSetCxx11CompileOptions()
 SharemindAddSharedLibrary("libfmodapi"
     SOURCES
         ${SharemindLibFModapi_SOURCES}
         ${SharemindLibFModapi_HEADERS}
-        ${SharemindLibFModapi_HEADERS_P}
     OUTPUT_NAME "sharemind_fmodapi"
     INCLUDE_DIRECTORIES
         ${SharemindCHeaders_INCLUDE_DIRS}
@@ -95,7 +90,9 @@ SharemindAddComponentPackage("lib"
     NAME "libsharemind-fmodapi"
     DESCRIPTION "Sharemind Facility Module API library"
     DEB_SECTION "libs"
-    DEB_DEPENDS "libc6 (>= 2.19)"
+    DEB_DEPENDS
+        "libc6 (>= 2.19)"
+        "libstdc++6 (>= 4.8.0)"
 )
 SharemindAddComponentPackage("dev"
     NAME "libsharemind-fmodapi-dev"
@@ -103,16 +100,10 @@ SharemindAddComponentPackage("dev"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
         "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
-        "libsharemind-modapi-dev (>= 0.3.0)"
-        "libsharemind-processfacility-api-dev"
-        "libsharemind-cheaders-dev (>= 0.1.0)"
-        "sharemind-facility-module-apis-dev (>= 1.0.0)"
+        "libsharemind-cxxheaders-dev (>= 0.4.0)"
+        "sharemind-facility-module-apis-dev (>= 2.0.0)"
         "libc6-dev (>= 2.19)"
-        "libgcc-4.8-dev"
-        "| libgcc-4.9-dev"
-        "| libgcc-5-dev"
-        "| libgcc-6-dev"
-        "| libgcc-7-dev"
+        "libstdc++-dev"
 )
 SharemindAddComponentPackage("debug"
     NAME "libsharemind-fmodapi-dbg"
