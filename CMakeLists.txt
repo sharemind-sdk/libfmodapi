@@ -99,7 +99,7 @@ SharemindAddComponentPackage("dev"
     DESCRIPTION "Sharemind Facility Module API library development headers"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
-        "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
+        "libsharemind-fmodapi (= ${SharemindLibFModapi_DEB_lib_PACKAGE_VERSION})"
         "libsharemind-cxxheaders-dev (>= 0.4.0)"
         "sharemind-facility-module-apis-dev (>= 2.0.0)"
         "libc6-dev (>= 2.19)"
@@ -109,6 +109,6 @@ SharemindAddComponentPackage("debug"
     NAME "libsharemind-fmodapi-dbg"
     DESCRIPTION "Sharemind Facility Module API library debug symbols"
     DEB_SECTION "debug"
-    DEB_DEPENDS "libsharemind-fmodapi (= ${SharemindLibFModapi_VERSION})"
+    DEB_DEPENDS "libsharemind-fmodapi (= ${SharemindLibFModapi_DEB_lib_PACKAGE_VERSION})"
 )
 SharemindPackagingFinalize()
