@@ -99,7 +99,7 @@ void translateModuleInitializationExceptions(
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wunused-member-function"
     #endif
-    class ModuleInitializationExceptionImpl final
+    class ModuleInitializationExceptionImpl
             : public FMA::ModuleInitializationException
     {
 
