@@ -46,7 +46,7 @@ INSTALL(FILES ${SharemindLibFModapi_HEADERS}
 # The library:
 FILE(GLOB_RECURSE SharemindLibFModapi_SOURCES
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-SharemindSetCxx11CompileOptions()
+SharemindSetCxx14CompileOptions()
 SharemindAddSharedLibrary("libfmodapi"
     SOURCES
         ${SharemindLibFModapi_SOURCES}
