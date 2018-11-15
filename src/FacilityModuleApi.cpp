@@ -26,7 +26,6 @@
 #include <iterator>
 #include <memory>
 #include <sharemind/Concat.h>
-#include <sharemind/compiler-support/GccNoreturn.h>
 #include <sharemind/DebugOnly.h>
 #include <sharemind/likely.h>
 #include <sharemind/facility-module-apis/api.h>
@@ -88,9 +87,8 @@ inline void capSizeOfVector(std::vector<Ts...> & vector,
 
 /** Wraps all the current (nested) exceptions so that they share ownership with
     libraryHandle, and rethrows them. */
-SHAREMIND_GCC_NORETURN_PART1
-void translateModuleInitializationExceptions(
-        std::shared_ptr<void> libraryHandle) SHAREMIND_GCC_NORETURN_PART2
+[[noreturn]] void translateModuleInitializationExceptions(
+        std::shared_ptr<void> libraryHandle)
 {
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wunused"
