@@ -23,62 +23,53 @@ PROJECT(SharemindLibFModapi VERSION 0.3.0 LANGUAGES "CXX")
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
-FIND_PACKAGE(SharemindCMakeHelpers 1.3 REQUIRED)
+FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
+
+FIND_PACKAGE(SharemindCHeaders 1.3.0 REQUIRED)
+FIND_PACKAGE(SharemindCxxHeaders 0.8.0 REQUIRED)
+FIND_PACKAGE(SharemindFacilityModuleApis 2.1.0 REQUIRED)
 
 
-FIND_PACKAGE(SharemindCxxHeaders 0.4.0 REQUIRED)
-FIND_PACKAGE(SharemindFacilityModuleApis 2.0.0 REQUIRED)
-
-
-################################################################################
-# libfmodapi
-################################################################################
-
-ADD_DEFINITIONS("-DSHAREMIND_INTERNAL_")
-
-# Headers:
+# LibFModapi:
 FILE(GLOB_RECURSE SharemindLibFModapi_HEADERS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 INSTALL(FILES ${SharemindLibFModapi_HEADERS}
         DESTINATION "include/sharemind/libfmodapi"
         COMPONENT "dev")
-
-# The library:
 FILE(GLOB_RECURSE SharemindLibFModapi_SOURCES
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 SharemindSetCxx14CompileOptions()
-SharemindAddSharedLibrary("libfmodapi"
+SharemindAddSharedLibrary(LibFModapi
+    OUTPUT_NAME "sharemind_fmodapi"
     SOURCES
         ${SharemindLibFModapi_SOURCES}
         ${SharemindLibFModapi_HEADERS}
-    OUTPUT_NAME "sharemind_fmodapi"
-    INCLUDE_DIRECTORIES
-        ${SharemindCHeaders_INCLUDE_DIRS}
-        ${SharemindLibModapi_INCLUDE_DIRS}
-        ${SharemindLibProcessFacility_INCLUDE_DIRS}
-        ${SharemindFacilityModuleApis_INCLUDE_DIRS}
-    LEGACY_DEFINITIONS
-        ${SharemindCHeaders_DEFINITIONS}
-        ${SharemindLibModapi_DEFINITIONS}
-        ${SharemindLibProcessFacility_DEFINITIONS}
-        ${SharemindFacilityModuleApis_DEFINITIONS}
-    COMPILE_DEFINITIONS
-        "_XOPEN_SOURCE=700"
-    LINK_LIBRARIES
-        ${SharemindCHeaders_LIBRARIES}
-        "-ldl"
 )
-
-# Install cmake files:
-SharemindCreateCMakeFindFiles(
-    INCLUDE_DIRS
-        "${CMAKE_INSTALL_PREFIX}/include"
-    DEFINITIONS
-        "-D__STDC_LIMIT_MACROS"
-        "-D_XOPEN_SOURCE=700"
-    LIBRARIES
-        "-L${CMAKE_INSTALL_PREFIX}/lib"
-        "-lsharemind_fmodapi"
+TARGET_INCLUDE_DIRECTORIES(LibFModapi
+    INTERFACE
+        # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # TODO
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
+    )
+TARGET_COMPILE_DEFINITIONS(LibFModapi
+    PRIVATE
+        "SHAREMIND_INTERNAL_"
+    PUBLIC
+        "__STDC_LIMIT_MACROS"
+        "_XOPEN_SOURCE=700"
+    )
+TARGET_LINK_LIBRARIES(LibFModapi
+    PRIVATE
+        "dl"
+    PUBLIC
+        "Sharemind::CHeaders"
+        "Sharemind::CxxHeaders"
+        "Sharemind::FacilityModuleApis"
+    )
+SharemindCreateCMakeFindFilesForTarget(LibFModapi
+    DEPENDENCIES
+        "SharemindCHeaders 1.3.0"
+        "SharemindCxxHeaders 0.8.0"
+        "SharemindFacilityModuleApis 2.1.0"
 )
 
 
@@ -98,8 +89,8 @@ SharemindAddComponentPackage("dev"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
         "libsharemind-fmodapi (= ${SharemindLibFModapi_DEB_lib_PACKAGE_VERSION})"
-        "libsharemind-cxxheaders-dev (>= 0.4.0)"
-        "sharemind-facility-module-apis-dev (>= 2.0.0)"
+        "libsharemind-cxxheaders-dev (>= 0.8.0)"
+        "sharemind-facility-module-apis-dev (>= 2.1.0)"
         "libc6-dev (>= 2.19)"
         "libstdc++-dev"
 )
