@@ -59,7 +59,7 @@ TARGET_COMPILE_DEFINITIONS(LibFModapi
     )
 TARGET_LINK_LIBRARIES(LibFModapi
     PRIVATE
-        "dl"
+        ${CMAKE_DL_LIBS}
     PUBLIC
         "Sharemind::CHeaders"
         "Sharemind::CxxHeaders"
