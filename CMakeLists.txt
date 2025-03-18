@@ -26,7 +26,7 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
 
 FIND_PACKAGE(SharemindCHeaders 1.3.0 REQUIRED)
-FIND_PACKAGE(SharemindCxxHeaders 0.9.0 REQUIRED)
+FIND_PACKAGE(SharemindCxxHeaders 0.10.1 REQUIRED)
 FIND_PACKAGE(SharemindFacilityModuleApis 2.1.0 REQUIRED)
 
 
@@ -67,7 +67,7 @@ TARGET_LINK_LIBRARIES(LibFModapi
 SharemindCreateCMakeFindFilesForTarget(LibFModapi
     DEPENDENCIES
         "SharemindCHeaders 1.3.0"
-        "SharemindCxxHeaders 0.9.0"
+        "SharemindCxxHeaders 0.10.1"
         "SharemindFacilityModuleApis 2.1.0"
 )
 
@@ -88,7 +88,7 @@ SharemindAddComponentPackage("dev"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
         "libsharemind-fmodapi (= ${SharemindLibFModapi_DEB_lib_PACKAGE_VERSION})"
-        "libsharemind-cxxheaders-dev (>= 0.9.0)"
+        "libsharemind-cxxheaders-dev (>= 0.10.1)"
         "sharemind-facility-module-apis-dev (>= 2.1.0)"
         "libc6-dev (>= 2.19)"
         "libstdc++-dev"
